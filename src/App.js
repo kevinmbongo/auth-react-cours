@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import SignInModal from "./components/SignInModal";
 import SignUpModal from "./components/SignUpModal";
 import Home from "./pages/Home";
 import Private from "./pages/Private/Private";
@@ -9,6 +10,7 @@ function App() {
   return (
     <>
       <SignUpModal />
+      <SignInModal />
 
       <Navbar />
 
