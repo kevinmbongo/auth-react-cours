@@ -1,9 +1,44 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../context/userContext";
 
 export default function SignUpModal() {
-  const { modalState, toggleModals } = useContext(UserContext);
-  console.log(modalState, toggleModals);
+  const { modalState, toggleModals, signUp } = useContext(UserContext);
+  const [validation, setValidation] = useState("");
+
+  console.log(signUp);
+
+  const inputs = useRef([]);
+  const addInputs = (el) => {
+    if (el && !inputs.current.includes(el)) {
+      inputs.current.push(el);
+    }
+  };
+
+  const formRef = useRef();
+
+  const handleForm = async (e) => {
+    e.preventDefault();
+    if (
+      (inputs.current[1].value.length || inputs.current[2].value.length) < 6
+    ) {
+      setValidation("6 characters minimum");
+      return;
+    } else if (inputs.current[1].value !== inputs.current[2].value) {
+      setValidation(" Passwords do not match");
+      return;
+    }
+
+    try {
+      const cred = await signUp(
+        inputs.current[0].value,
+        inputs.current[1].value
+      );
+      formRef.current.reset();
+      setValidation("");
+      console.log(cred);
+    } catch (err) {}
+  };
+
   return (
     <>
       {modalState.signUpModal && (
@@ -12,6 +47,7 @@ export default function SignUpModal() {
             onClick={() => toggleModals("close")}
             className="w-100 h-100 bg-dark bg-opacity-75"
           ></div>
+
           <div
             className="position-absolute top-50 start-50 translate-middle"
             style={{ minWidth: "400px" }}
@@ -25,13 +61,19 @@ export default function SignUpModal() {
                     className="btn-close"
                   ></button>
                 </div>
+
                 <div className="modal-body">
-                  <form className="sign-up-form">
+                  <form
+                    ref={formRef}
+                    onSubmit={handleForm}
+                    className="sign-up-form"
+                  >
                     <div className="mb-3">
                       <label htmlFor="signUpEmail" className="form-label">
                         Email adress
                       </label>
                       <input
+                        ref={addInputs}
                         name="email"
                         required
                         type="email"
@@ -45,6 +87,7 @@ export default function SignUpModal() {
                         Password
                       </label>
                       <input
+                        ref={addInputs}
                         name="pwd"
                         required
                         type="password"
@@ -58,13 +101,14 @@ export default function SignUpModal() {
                         repeat Password
                       </label>
                       <input
+                        ref={addInputs}
                         name="pwd"
                         required
                         type="password"
                         className="form-control"
                         id="repeatPwd"
                       />
-                      <p className="tetx-danger mt-1">Validation</p>
+                      <p className="text-danger mt-1">{validation}</p>
                     </div>
 
                     <button className="btn btn-primary"> Submit</button>

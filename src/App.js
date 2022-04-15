@@ -7,7 +7,9 @@ function App() {
   return (
     <>
       <SignUpModal />
+
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>

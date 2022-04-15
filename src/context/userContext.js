@@ -1,7 +1,21 @@
+import { 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged 
+} from "firebase/auth";
 import { createContext, useState } from "react";
+import { auth } from "../firebase-config";
 
 export const UserContext = createContext();
+
 export function UserContextProvider(props) {
+  const [currentuser, setCurrentUser] = useState();
+  const [loadingData, setLoadingData] = useState(true);
+
+  const signUp = (email, pwd) =>
+    createUserWithEmailAndPassword(auth, email, pwd);
+
+  // modal
   const [modalState, setModalState] = useState({
     signUpModal: false,
     signInModal: false,
@@ -27,7 +41,7 @@ export function UserContextProvider(props) {
     }
   };
   return (
-    <UserContext.Provider value={{ toggleModals, modalState }}>
+    <UserContext.Provider value={{ toggleModals, modalState, signUp }}>
       {props.children}
     </UserContext.Provider>
   );
